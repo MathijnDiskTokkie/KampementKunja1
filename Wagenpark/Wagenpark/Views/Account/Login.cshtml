@@ -1,0 +1,284 @@
+﻿@using Wagenpark.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<style>
+    .row.content {
+        height: 1500px
+    }
+
+    .sidenav {
+       background: rgb(128, 128, 128);
+        height: 100%;
+    }
+
+    body {
+        font-family: Arial;
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    img {
+        vertical-align: middle;
+    }
+    .carousel {
+        width: 400px;
+        height: 260px;
+    }
+
+</style>
+
+<body>
+    <script>
+        // This is called with the results from from FB.getLoginStatus().
+        function statusChangeCallback(response) {
+            console.log('statusChangeCallback');
+            console.log(response);
+            // The response object is returned with a status field that lets the
+            // app know the current login status of the person.
+            // Full docs on the response object can be found in the documentation
+            // for FB.getLoginStatus().
+            if (response.status === 'connected') {
+                // Logged into your app and Facebook.
+                testAPI();
+            } else {
+                // The person is not logged into your app or we are unable to tell.
+                document.getElementById('status').innerHTML = 'Please log ' +
+                    'into this app.';
+            }
+        }
+
+        // This function is called when someone finishes with the Login
+        // Button.  See the onlogin handler attached to it in the sample
+        // code below.
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            });
+        }
+
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '407403646457389',
+                cookie: true,  // enable cookies to allow the server to access
+                // the session
+                xfbml: true,  // parse social plugins on this page
+                version: 'v2.8' // use graph api version 2.8
+            });
+
+            
+
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            });
+
+        };
+
+        // Load the SDK asynchronously
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        // Here we run a very simple test of the Graph API after login is
+        // successful.  See statusChangeCallback() for when this call is made.
+        function testAPI() {
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function (response) {
+                console.log('Successful login for: ' + response.name  );
+                document.getElementById('status').innerHTML =
+                    'Thanks for logging in, ' + response.name +'!';
+            });
+        }
+
+        
+    </script>
+
+    <br />
+    <br />
+    <div class="row">
+        <div class="container-fluid">
+            <div class="col-sm-4 sidenav">
+                <div class="pull-left">
+         
+                    <img src="~/Content/Images/logo_Kunja.jpg" alt="Sample Image" />
+                    <h2>@ViewBag.Title</h2>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <section id="loginForm">
+                                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <h4>Use a local account to log in.</h4>
+                                    <hr />
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                                        <div class="col-md-10">
+                                            @Html.TextBoxFor(m => m.Email, new { placeholder = "E-mailadres", @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                                        <div class="col-md-10">
+                                            @Html.PasswordFor(m => m.Password, new { placeholder = "Wachtwoord", @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-offset-2 col-md-10">
+                                            <div class="checkbox">
+                                                @Html.CheckBoxFor(m => m.RememberMe)
+                                                @Html.LabelFor(m => m.RememberMe)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-offset-2 col-md-10">
+                                            <input type="submit" value="Log in" class="btn btn-default" />
+                                        </div>
+                                    </div>
+                                    <p>
+                                        @Html.ActionLink("Register as a new user", "Register")
+                                    </p>
+                                    @* Enable this once you have account confirmation enabled for password reset functionality
+                                        <p>
+                                            @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                                        </p>*@
+                                }
+                                <fb:login-button scope="public_profile,email"
+                                                 onlogin="checkLoginState();">
+                                </fb:login-button>
+
+                                <div id="fb-root"></div>
+                                <div id="status">
+
+                                </div>
+                            </section>
+
+
+
+
+
+                        </div>
+                    </div>
+                  
+
+                </div>
+
+
+
+            </div>
+            <div class="w3-text-white">
+                <div class="col-sm-8">
+                    <div class="pull-right">
+                        <p><center><h1> Welkom!</h1></center></p> <br /> <br />
+                        <p><h2> "Kunja bezorgt u een perfecte vakantie"</h2></p>
+                       
+                        <br /><br /><br /><br />
+
+
+                        <h2>Foto's van Kunja</h2>
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#myCarousel" data-slide-to="1"></li>
+                                <li data-target="#myCarousel" data-slide-to="2"></li>
+                                <li data-target="#myCarousel" data-slide-to="3"></li>
+                                <li data-target="#myCarousel" data-slide-to="4"></li>
+                                <li data-target="#myCarousel" data-slide-to="5"></li>
+                            </ol>
+
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+
+                                <div class="item active">
+                                    <img src="~/Content/Images/4-p-lodge.jpg" alt="4-p-lodge" style="width:100%;">
+                                    <div class="carousel-caption">
+                                        <p>4 personen lodge</p>
+                                    </div>
+                                </div>
+
+                                <div class="item">
+                                    <img src="~/Content/Images/2-p-lodge.jpg" alt="2-p-lodge" style="width:100%;">
+                                    <div class="carousel-caption">
+                                        <p>2 personen lodge</p>
+                                    </div>
+                                </div>
+
+                                <div class="item">
+                                    <img src="~/Content/Images/1-p-lodge.jpg" alt="1-p-lodge" style="width:100%;">
+                                    <div class="carousel-caption">
+                                        <p>1 persoons lodge</p>
+                                    </div>
+                                </div>
+
+                                <div class="item">
+                                    <img src="~/Content/Images/open-woonkamer.jpg" alt="open-woonkamer" style="width:100%;">
+                                    <div class="carousel-caption">
+                                        <p>de woonkamer</p>
+                                    </div>
+                                </div>
+
+                                <div class="item">
+                                    <img src="~/Content/Images/bed.jpg" alt="bed" style="width:100%;">
+                                    <div class="carousel-caption">
+                                        <p>de slaapkamer</p>
+                                    </div>
+                                </div>
+
+                                <div class="item">
+                                    <img src="~/Content/Images/bad.jpg" alt="bad" style="width:100%;">
+                                    <div class="carousel-caption">
+                                        <p>het bad</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Left and right controls -->
+                            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+   
+</body>
+
+
+
+        @section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+        }
